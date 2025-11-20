@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/GilStore/static/css/main.0893ffb4.css",
+    "main.js": "/GilStore/static/js/main.efec4669.js",
+    "static/js/453.430a030c.chunk.js": "/GilStore/static/js/453.430a030c.chunk.js",
+    "index.html": "/GilStore/index.html",
+    "main.0893ffb4.css.map": "/GilStore/static/css/main.0893ffb4.css.map",
+    "main.efec4669.js.map": "/GilStore/static/js/main.efec4669.js.map",
+    "453.430a030c.chunk.js.map": "/GilStore/static/js/453.430a030c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0893ffb4.css",
+    "static/js/main.efec4669.js"
+  ]
+}
