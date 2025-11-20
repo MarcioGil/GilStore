@@ -28,7 +28,7 @@ export const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [dadosPix, setDadosPix] = useState({cpf:'', nome:''});
 
   const descontoPix = pagamento === 'pix' ? 0.1 : 0;
-  const valorFinal = (total * (1 - descontoPix));
+  const valorFinal = (total * (1 - descontoPix)) + frete.valor;
   const valorParcela = pagamento === 'cartao' ? valorFinal / parcelas : valorFinal;
 
   const handleCheckout = (e: React.FormEvent) => {
@@ -61,6 +61,9 @@ export const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <div className="mb-2 text-right text-xl font-bold text-blue-700">Total: R$ {total.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
       {pagamento === 'pix' && (
         <div className="mb-2 text-right text-green-600 font-bold">Desconto Pix: -10% (R$ {(total*0.1).toLocaleString('pt-BR', {minimumFractionDigits:2})})</div>
+      )}
+      {frete.prazo && (
+        <div className="mb-2 text-right text-green-700 font-bold">Frete: {frete.valor === 0 ? 'Grátis' : `R$ ${frete.valor.toLocaleString('pt-BR', {minimumFractionDigits:2})}`} | Prazo: {frete.prazo}</div>
       )}
       <div className="mb-4 text-right text-xl font-bold text-blue-900">Valor final: R$ {valorFinal.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
       {pagamento === 'cartao' && (
