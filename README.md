@@ -1,46 +1,127 @@
-# Getting Started with Create React App
+# GilStore
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![Tamanho do repositório](https://img.shields.io/github/repo-size/MarcioGil/GilStore)
+![Estrelas](https://img.shields.io/github/stars/MarcioGil/GilStore?style=social)
+![Forks](https://img.shields.io/github/forks/MarcioGil/GilStore?style=social)
+![Issues](https://img.shields.io/github/issues/MarcioGil/GilStore)
+![Último commit](https://img.shields.io/github/last-commit/MarcioGil/GilStore)
+![Licença](https://img.shields.io/github/license/MarcioGil/GilStore)
 
-## Available Scripts
+<p align="center">
+  <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Logo GilStore" width="80" />
+</p>
 
-In the project directory, you can run:
+# 🛒 GilStore
 
-### `npm start`
+Loja virtual desenvolvida em React + Tailwind CSS, com catálogo dinâmico da Fake Store API, carrinho, filtros avançados, checkout e acessibilidade. O projeto é responsivo, acessível para PCDs e pronto para deploy no GitHub Pages.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 🎯 Funcionalidades
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Catálogo de produtos dinâmico
+- Filtros avançados (nome, categoria, preço, avaliação, ordenação)
+- Carrinho de compras com edição
+- Checkout com resumo
+- Tradução de nomes e categorias para português
+- Layout responsivo e acessível
+- Deploy fácil no GitHub Pages
 
-### `npm test`
+## 🏗️ Arquitetura
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```mermaid
+graph TD;
+  Home[Home]
+  Header[Header]
+  Cart[Cart]
+  Checkout[Checkout]
+  CartContext[CartContext]
+  API[Fake Store API]
+  Tailwind[Tailwind CSS]
+  Home --> Header
+  Home --> Cart
+  Home --> Checkout
+  Home --> CartContext
+  Home --> API
+  Home --> Tailwind
+```
 
-### `npm run build`
+- **src/pages/Home.tsx**: Catálogo, filtros, lógica principal
+- **src/components/Header.tsx**: Cabeçalho e nome da loja
+- **src/components/Cart.tsx**: Modal do carrinho
+- **src/components/Checkout.tsx**: Modal de checkout
+- **src/context/CartContext.tsx**: Estado global do carrinho
+- **src/services/api.ts**: Integração com Fake Store API
+- **tailwind.config.js**: Configuração do Tailwind
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🎬 Demonstração
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![Demo](https://user-images.githubusercontent.com/MarcioGil/GilStore/demo.gif)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Deploy
 
-### `npm run eject`
+O deploy é feito via GitHub Pages. Após testar localmente, siga as instruções abaixo.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 👨‍💻 Como Executar Localmente
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Acesse [http://localhost:3000](http://localhost:3000) para visualizar.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## 🌐 Como Fazer o Deploy no GitHub Pages
 
-## Learn More
+1. Configure o campo `homepage` no `package.json`:
+   ```json
+   "homepage": "https://MarcioGil.github.io/GilStore"
+   ```
+2. Instale o pacote gh-pages:
+   ```bash
+   npm install --save gh-pages
+   ```
+3. Adicione os scripts ao `package.json`:
+   ```json
+   "scripts": {
+     "predeploy": "npm run build",
+     "deploy": "gh-pages -d build"
+   }
+   ```
+4. Execute o deploy:
+   ```bash
+   npm run deploy
+   ```
+5. O site estará disponível em: [https://MarcioGil.github.io/GilStore](https://MarcioGil.github.io/GilStore)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🤝 Como Contribuir
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Faça um fork do projeto
+2. Crie uma branch: `git checkout -b minha-feature`
+3. Faça suas alterações
+4. Envie um pull request
+
+### Regras para Colaboradores
+
+- Siga o padrão de código do projeto
+- Escreva comentários claros
+- Teste antes de enviar PR
+- Respeite a licença e o código de conduta
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👤 Apresentação
+
+Olá! Eu sou **Márcio Gil**, Embaixador da turma 14 do DIO Campus Expert, Estudante do 5° período de Engenharia de Software, entusiasta da Educação, Inovação, Tecnologia e numa constante luta por Justiça Social.
+
+- [LinkedIn](https://linkedin.com/in/márcio-gil-1b7669309)
+- [Currículo](https://marciogil.github.io/curriculum-vitae/)
+- [GitHub Pessoal](https://github.com/MarcioGil/MarcioGil.git)
+
+## 📫 Contato
+
+Fique à vontade para entrar em contato e contribuir!
+
+---
+
+> Projeto desenvolvido para portfólio, estudos e colaboração aberta.
