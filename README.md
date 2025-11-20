@@ -1,5 +1,11 @@
 # GilStore
 
+## 🌐 Site publicado
+[Acesse a loja online](https://marciogil.github.io/GilStore/)
+
+## 📦 Repositório
+[GitHub: MarcioGil/GilStore](https://github.com/MarcioGil/GilStore)
+
 ![Tamanho do repositório](https://img.shields.io/github/repo-size/MarcioGil/GilStore)
 ![Estrelas](https://img.shields.io/github/stars/MarcioGil/GilStore?style=social)
 ![Forks](https://img.shields.io/github/forks/MarcioGil/GilStore?style=social)
