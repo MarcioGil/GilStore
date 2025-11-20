@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 export interface Product {
   id: number;
   title: string;
+  description: string;
   price: number;
   image: string;
   category: string;
@@ -42,6 +43,28 @@ const nomeProdutosPT: Record<string, string> = {
   "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa Feminina MBJ Gola Canoa",
   "Opna Women's Short Sleeve Moisture": "Blusa Feminina Opna Manga Curta",
   "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta Feminina DANVOUY Algodão Casual"
+};
+const descricaoProdutosPT: Record<string, string> = {
+  "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila resistente, ideal para o dia a dia e viagens, comporta notebook de até 15 polegadas.",
+  "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta masculina premium, ajuste slim, confortável para todas as ocasiões.",
+  "Mens Cotton Jacket": "Jaqueta masculina de algodão, perfeita para dias frios e looks casuais.",
+  "Mens Casual Slim Fit": "Calça masculina slim fit, tecido leve e moderno, ideal para o cotidiano.",
+  "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet": "Pulseira feminina John Hardy, design de dragão em ouro e prata, sofisticada e elegante.",
+  "Solid Gold Petite Micropave ": "Anel micropave em ouro maciço, delicado e brilhante para ocasiões especiais.",
+  "White Gold Plated Princess": "Anel princesa banhado a ouro branco, acabamento refinado e luxuoso.",
+  "Pierced Owl Rose Gold Plated Stainless Steel Double": "Brinco Pierced Owl em aço inox banhado a ouro rosé, moderno e resistente.",
+  "WD 2TB Elements Portable External Hard Drive - USB 3.0 ": "HD externo WD 2TB, conexão USB 3.0, alta velocidade para backup e armazenamento.",
+  "SanDisk SSD PLUS 1TB Internal SSD - SATA III 6 Gb/s": "SSD interno SanDisk 1TB, tecnologia SATA III, desempenho superior para seu PC.",
+  "Silicon Power 256GB SSD 3D NAND A55 SLC Cache Performance Boost SATA III 2.5": "SSD Silicon Power 256GB, rápido e confiável, ideal para upgrades.",
+  "WD 4TB Gaming Drive Works with Playstation 4 Portable External Hard Drive": "HD externo WD 4TB, compatível com Playstation 4, perfeito para gamers.",
+  "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin": "Monitor Acer 21.5\" Full HD IPS, ultrafino, imagem nítida e cores vibrantes.",
+  "Samsung 49-Inch CHG90 144Hz Curved Gaming Monitor": "Monitor Samsung 49\" curvo, 144Hz, experiência imersiva para jogos.",
+  "BIYLACLESEN Women's 3-6 Packs Solid Basic Short Sleeve Boat Neck V ": "Blusa feminina BIYLACLESEN, gola canoa, manga curta, básica e confortável.",
+  "Lock and Love Women's Removable Hooded Faux Leather Moto Biker Jacket": "Jaqueta feminina Lock and Love, couro sintético, capuz removível, estilo motoqueira.",
+  "Rain Jacket Women Windbreaker Striped Climbing Raincoats": "Jaqueta feminina impermeável, leve e estilosa, ideal para dias chuvosos.",
+  "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa feminina MBJ, manga curta, gola canoa, versátil para o dia a dia.",
+  "Opna Women's Short Sleeve Moisture": "Blusa feminina Opna, manga curta, tecido que absorve umidade, ideal para esportes.",
+  "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta feminina DANVOUY, algodão casual, confortável e moderna."
 };
 export const Home: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -81,10 +104,11 @@ export const Home: React.FC = () => {
   useEffect(() => {
     fetchProducts()
       .then(data => {
-        // Traduz nomes para português
+        // Traduz nomes e descrições para português
         const traduzidos = data.map((p: Product) => ({
           ...p,
-          title: nomeProdutosPT[p.title] || p.title
+          title: nomeProdutosPT[p.title] || p.title,
+          description: descricaoProdutosPT[p.title] || p.description
         }));
         setProducts(traduzidos);
         // Salva categorias traduzidas
