@@ -54,6 +54,27 @@ export const Home: React.FC = () => {
     const [minRating, setMinRating] = useState('');
     const [sortBy, setSortBy] = useState('');
   const { addToCart } = useCart();
+  // Estado para avaliações
+  const [avaliacoes, setAvaliacoes] = useState<{[id:number]: {nota:number, comentario:string}[]}>({});
+
+  // Carregar avaliações do localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('avaliacoes');
+    if (stored) setAvaliacoes(JSON.parse(stored));
+  }, []);
+
+  // Salvar avaliações no localStorage
+  useEffect(() => {
+    localStorage.setItem('avaliacoes', JSON.stringify(avaliacoes));
+  }, [avaliacoes]);
+
+  // Função para adicionar avaliação
+  const adicionarAvaliacao = (id:number, nota:number, comentario:string) => {
+    setAvaliacoes(prev => ({
+      ...prev,
+      [id]: [...(prev[id]||[]), {nota, comentario}]
+    }));
+  };
   useEffect(() => {
     fetchProducts()
       .then(data => {
@@ -71,6 +92,15 @@ export const Home: React.FC = () => {
   }, []);
   if (loading) return <div className="text-center mt-10">Carregando...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+
+  // Banner de promoções
+  const bannerPromocao = (
+    <div className="w-full mb-6">
+      <div className="bg-gradient-to-r from-pink-500 via-blue-500 to-green-500 text-white text-center py-3 rounded-xl shadow-lg font-bold text-lg animate-pulse">
+        🎉 Frete grátis acima de R$200 | 10% OFF no Pix | Novidades toda semana!
+      </div>
+    </div>
+  );
   let filteredProducts = products.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(search.toLowerCase());
     // Compara categoria traduzida
@@ -112,6 +142,7 @@ export const Home: React.FC = () => {
   }
   return (
     <div className="p-6">
+      {bannerPromocao}
       <form className="bg-white rounded-lg shadow p-6 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between" aria-label="Filtros de produtos">
         <div className="flex flex-col w-full md:w-1/3">
           <label htmlFor="search" className="text-sm font-medium text-gray-700 mb-1">Buscar por nome</label>
@@ -219,6 +250,43 @@ export const Home: React.FC = () => {
               >
                 <span className="inline-block mr-2">+</span> Adicionar ao carrinho
               </button>
+
+              {/* Avaliação */}
+              <div className="w-full mt-4">
+                <form
+                  className="flex flex-col gap-2"
+                  onSubmit={e => {
+                    e.preventDefault();
+                    const form = e.target as typeof e.target & { nota: { value: string }, comentario: { value: string } };
+                    const nota = Number(form.nota.value);
+                    const comentario = form.comentario.value;
+                    if (nota >= 1 && nota <= 5 && comentario.length > 0) {
+                      adicionarAvaliacao(product.id, nota, comentario);
+                      form.nota.value = '';
+                      form.comentario.value = '';
+                    }
+                  }}
+                  aria-label={`Avaliar ${product.title}`}
+                >
+                  <label className="text-sm font-medium text-gray-700">Avalie este produto:</label>
+                  <div className="flex gap-2 items-center">
+                    <input name="nota" type="number" min="1" max="5" required placeholder="Nota (1-5)" className="border rounded px-2 py-1 w-16" aria-label="Nota" />
+                    <input name="comentario" type="text" required placeholder="Comentário" className="border rounded px-2 py-1 flex-1" aria-label="Comentário" />
+                    <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded">Enviar</button>
+                  </div>
+                </form>
+                {/* Lista de avaliações */}
+                {avaliacoes[product.id] && avaliacoes[product.id].length > 0 && (
+                  <div className="mt-2">
+                    <span className="font-bold text-sm text-gray-700">Avaliações:</span>
+                    <ul className="mt-1">
+                      {avaliacoes[product.id].map((a, idx) => (
+                        <li key={idx} className="text-sm text-gray-800 mb-1">⭐ {a.nota} - {a.comentario}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           ))
         )}
