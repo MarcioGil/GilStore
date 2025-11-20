@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ProductModal } from '../components/ProductModal';
 import { fetchProducts } from '../services/api';
 import { useCart } from '../context/CartContext';
 export interface Product {
@@ -54,6 +55,8 @@ export const Home: React.FC = () => {
     const [minRating, setMinRating] = useState('');
     const [sortBy, setSortBy] = useState('');
   const { addToCart } = useCart();
+  const [selectedProduct, setSelectedProduct] = useState<Product|null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   // Estado para avaliações
   const [avaliacoes, setAvaliacoes] = useState<{[id:number]: {nota:number, comentario:string}[]}>({});
 
@@ -238,7 +241,19 @@ export const Home: React.FC = () => {
           <div className="col-span-full text-center text-gray-500">Nenhum produto encontrado.</div>
         ) : (
           filteredProducts.map(product => (
-            <div key={product.id} className="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center hover:shadow-2xl hover:-translate-y-1 transition duration-200 border border-gray-100">
+            <div
+              key={product.id}
+              className="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center hover:shadow-2xl hover:-translate-y-1 transition duration-200 border border-gray-100 cursor-pointer"
+              onClick={e => {
+                // Evita abrir modal ao clicar no botão de adicionar ao carrinho
+                if ((e.target as HTMLElement).closest('button')) return;
+                setSelectedProduct(product);
+                setModalOpen(true);
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`Ver detalhes de ${product.title}`}
+            >
               <div className="w-full flex justify-center items-center mb-4">
                 <img src={product.image} alt={product.title} className="h-32 object-contain" style={{maxWidth:'80%'}} />
               </div>
@@ -246,11 +261,13 @@ export const Home: React.FC = () => {
               <span className="text-blue-700 font-extrabold text-xl mb-2 drop-shadow">{product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
               <button
                 className="mt-auto bg-gradient-to-r from-pink-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow hover:scale-105 hover:from-pink-600 transition font-bold tracking-wide"
-                onClick={() => addToCart(product)}
+                onClick={e => {
+                  e.stopPropagation();
+                  addToCart(product);
+                }}
               >
                 <span className="inline-block mr-2">+</span> Adicionar ao carrinho
               </button>
-
               {/* Avaliação */}
               <div className="w-full mt-4">
                 <form
@@ -267,6 +284,7 @@ export const Home: React.FC = () => {
                     }
                   }}
                   aria-label={`Avaliar ${product.title}`}
+                  onClick={e => e.stopPropagation()}
                 >
                   <label className="text-sm font-medium text-gray-700">Avalie este produto:</label>
                   <div className="flex gap-2 items-center">
@@ -291,6 +309,15 @@ export const Home: React.FC = () => {
           ))
         )}
       </div>
-    </div>
+    {/* Modal de detalhes do produto */}
+    {modalOpen && selectedProduct && (
+      <ProductModal
+        product={selectedProduct}
+        open={modalOpen}
+        onClose={() => { setModalOpen(false); setSelectedProduct(null); }}
+        onAddToCart={addToCart}
+      />
+    )}
+  </div>
   );
 };
