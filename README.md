@@ -92,26 +92,69 @@ graph TD;
 
 O deploy é feito via GitHub Pages. Após testar localmente, siga as instruções abaixo.
 
+
 ## 👨‍💻 Como Executar Localmente
 
-```bash
-npm install
-npm start
-```
+
+
+   ```bash
+   npm install
+   npm start
+   ```
 
 Acesse [http://localhost:3000](http://localhost:3000) para visualizar.
+
+---
+
+## 🗄️ Mock Backend (Controle de Estoque Realista)
+
+Para simular um backend realista com controle de estoque, utilize o **json-server** já configurado neste projeto.
+
+### Como rodar o mock server
+
+1. Instale as dependências (se ainda não fez):
+
+   ```bash
+   npm install
+   ```
+2. Inicie o mock backend em outra aba/terminal:
+
+   ```bash
+   npm run server
+   ```
+   Isso irá rodar o json-server em [http://localhost:3001/products](http://localhost:3001/products)
+
+### Como funciona o controle de estoque?
+
+- O frontend consome a API local do mock backend (`db.json`).
+- Ao finalizar uma compra, o estoque de cada produto é decrementado automaticamente via API.
+- Se o estoque chegar a 0, o produto ficará indisponível para novas compras.
+- Você pode editar o arquivo `db.json` para resetar ou ajustar estoques manualmente.
+
+### Testando a integração
+
+1. Inicie o frontend normalmente (`npm start`).
+2. Inicie o mock backend (`npm run server`).
+3. Adicione produtos ao carrinho e finalize a compra.
+4. O estoque será atualizado em tempo real no backend mock.
+5. Para ver o estoque atualizado, recarregue a página ou consulte [http://localhost:3001/products](http://localhost:3001/products).
+
+---
 
 ## 🌐 Como Fazer o Deploy no GitHub Pages
 
 1. Configure o campo `homepage` no `package.json`:
+
    ```json
    "homepage": "https://MarcioGil.github.io/GilStore"
    ```
 2. Instale o pacote gh-pages:
+
    ```bash
    npm install --save gh-pages
    ```
 3. Adicione os scripts ao `package.json`:
+
    ```json
    "scripts": {
      "predeploy": "npm run build",
@@ -119,6 +162,7 @@ Acesse [http://localhost:3000](http://localhost:3000) para visualizar.
    }
    ```
 4. Execute o deploy:
+
    ```bash
    npm run deploy
    ```

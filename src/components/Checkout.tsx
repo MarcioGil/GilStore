@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { updateProductStock } from '../services/api';
 import { useHistory } from '../context/HistoryContext';
 const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { addHistory } = useHistory();
@@ -39,9 +40,9 @@ const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setConfirmCheckout(true);
   };
 
-  const confirmAndFinishCheckout = () => {
+  const confirmAndFinishCheckout = async () => {
     // Registrar cada item do carrinho como compra no histórico
-    cart.forEach(item => {
+    for (const item of cart) {
       addHistory({
         type: 'purchase',
         productId: item.product.id,
@@ -51,7 +52,16 @@ const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         quantity: item.quantity,
         price: item.product.price * item.quantity
       });
-    });
+      // Atualizar estoque no backend mock
+      if (typeof item.product.stock === 'number') {
+        const novoEstoque = Math.max(0, item.product.stock - item.quantity);
+        try {
+          await updateProductStock(item.product.id, novoEstoque);
+        } catch (e) {
+          // Opcional: mostrar erro de estoque
+        }
+      }
+    }
     setSuccess(true);
     clearCart();
     setConfirmCheckout(false);
