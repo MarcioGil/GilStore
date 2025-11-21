@@ -1,15 +1,25 @@
 {
   "files": {
-    "main.css": "/GilStore/static/css/main.d4744595.css",
-    "main.js": "/GilStore/static/js/main.af83d36e.js",
+    "main.css": "/GilStore/static/css/main.b01f555e.css",
+    "main.js": "/GilStore/static/js/main.5b5f4e36.js",
+    "static/js/147.cc7ab7e5.chunk.js": "/GilStore/static/js/147.cc7ab7e5.chunk.js",
+    "static/js/885.97108677.chunk.js": "/GilStore/static/js/885.97108677.chunk.js",
+    "static/js/916.9f0ae09e.chunk.js": "/GilStore/static/js/916.9f0ae09e.chunk.js",
+    "static/js/681.56be21b8.chunk.js": "/GilStore/static/js/681.56be21b8.chunk.js",
+    "static/js/129.c73ff51f.chunk.js": "/GilStore/static/js/129.c73ff51f.chunk.js",
     "static/js/453.430a030c.chunk.js": "/GilStore/static/js/453.430a030c.chunk.js",
     "index.html": "/GilStore/index.html",
-    "main.d4744595.css.map": "/GilStore/static/css/main.d4744595.css.map",
-    "main.af83d36e.js.map": "/GilStore/static/js/main.af83d36e.js.map",
+    "main.b01f555e.css.map": "/GilStore/static/css/main.b01f555e.css.map",
+    "main.5b5f4e36.js.map": "/GilStore/static/js/main.5b5f4e36.js.map",
+    "147.cc7ab7e5.chunk.js.map": "/GilStore/static/js/147.cc7ab7e5.chunk.js.map",
+    "885.97108677.chunk.js.map": "/GilStore/static/js/885.97108677.chunk.js.map",
+    "916.9f0ae09e.chunk.js.map": "/GilStore/static/js/916.9f0ae09e.chunk.js.map",
+    "681.56be21b8.chunk.js.map": "/GilStore/static/js/681.56be21b8.chunk.js.map",
+    "129.c73ff51f.chunk.js.map": "/GilStore/static/js/129.c73ff51f.chunk.js.map",
     "453.430a030c.chunk.js.map": "/GilStore/static/js/453.430a030c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d4744595.css",
-    "static/js/main.af83d36e.js"
+    "static/css/main.b01f555e.css",
+    "static/js/main.5b5f4e36.js"
   ]
 }
