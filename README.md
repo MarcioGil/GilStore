@@ -3,7 +3,18 @@
 ## 🌐 Site publicado
 [Acesse a loja online](https://marciogil.github.io/GilStore/)
 
-## 📦 Repositório
+
+## ♿ Tecnologias e recursos de acessibilidade
+
+Este projeto foi desenvolvido com foco em acessibilidade, utilizando:
+
+- **React**: Estrutura de componentes com semântica e navegação por teclado.
+- **Tailwind CSS**: Classes utilitárias para contraste, foco, responsividade e acessibilidade visual.
+- **Aria-labels e roles**: Elementos interativos possuem atributos ARIA para leitores de tela e navegação assistida.
+- **Labels em formulários**: Todos os campos de formulário possuem labels associadas para melhor compreensão.
+- **Foco e navegação por teclado**: Cards de produtos, modais e botões podem ser acessados e ativados via teclado.
+- **Mensagens de erro e feedbacks visuais**: Informações claras para todos os usuários.
+
 [GitHub: MarcioGil/GilStore](https://github.com/MarcioGil/GilStore)
 
 ![Tamanho do repositório](https://img.shields.io/github/repo-size/MarcioGil/GilStore)
