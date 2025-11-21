@@ -6,14 +6,29 @@
 
 ## ♿ Tecnologias e recursos de acessibilidade
 
+
 Este projeto foi desenvolvido com foco em acessibilidade, utilizando:
 
-- **React**: Estrutura de componentes com semântica e navegação por teclado.
-- **Tailwind CSS**: Classes utilitárias para contraste, foco, responsividade e acessibilidade visual.
-- **Aria-labels e roles**: Elementos interativos possuem atributos ARIA para leitores de tela e navegação assistida.
-- **Labels em formulários**: Todos os campos de formulário possuem labels associadas para melhor compreensão.
-- **Foco e navegação por teclado**: Cards de produtos, modais e botões podem ser acessados e ativados via teclado.
-- **Mensagens de erro e feedbacks visuais**: Informações claras para todos os usuários.
+- **React**: Estrutura de componentes com semântica (`header`, `main`, `button`, `form`) e navegação por teclado.
+- **Tailwind CSS**: Classes utilitárias para contraste, foco visível (`focus:outline`, `focus:ring`), responsividade e acessibilidade visual.
+- **Aria-labels, role e tabIndex**: Elementos interativos possuem atributos ARIA (`aria-label`, `role="button"`, `tabIndex={0}`) para leitores de tela e navegação assistida. Exemplo:
+
+   ```tsx
+   <div
+      tabIndex={0}
+      role="button"
+      aria-label={`Ver detalhes de ${product.title}`}
+      ...
+   >
+   ```
+
+- **Labels em formulários**: Todos os campos de formulário possuem labels associadas para melhor compreensão e navegação por leitores de tela.
+
+- **Foco e navegação por teclado**: Cards de produtos, modais e botões podem ser acessados e ativados via teclado, garantindo usabilidade para todos.
+
+- **Mensagens de erro e feedbacks visuais**: Informações claras e acessíveis para todos os usuários, inclusive em estados de erro ou carregamento.
+
+- **Testes manuais**: O site foi testado com navegação por teclado (Tab, Enter, Esc) e leitores de tela para garantir acessibilidade real.
 
 [GitHub: MarcioGil/GilStore](https://github.com/MarcioGil/GilStore)
 
