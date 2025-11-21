@@ -157,3 +157,13 @@ Fique à vontade para entrar em contato e contribuir!
 ---
 
 > Projeto desenvolvido para portfólio, estudos e colaboração aberta.
+
+## ⚡ PWA: Progressive Web App
+
+- **Instalável**: Pode ser adicionada à tela inicial do celular ou desktop, funcionando como um app nativo.
+- **Offline**: Funciona sem conexão após o primeiro acesso, graças ao service worker e cache inteligente.
+- **Performance**: Carregamento rápido, otimização de bundle e recursos, experiência fluida mesmo em redes lentas.
+- **Manifesto customizado**: Ícones, nome, tema e descrição próprios da GilStore.
+- **Prompt de instalação**: Usuário recebe sugestão para instalar no dispositivo.
+
+> Teste: Acesse pelo Chrome/Edge no celular ou desktop, clique em "Instalar GilStore" na barra de endereço ou menu do navegador.

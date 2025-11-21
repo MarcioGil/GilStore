@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Header } from './components/Header';
 import { CartProvider, useCart } from './context/CartContext';
 import { Home } from './pages/Home';
-import { Cart } from './components/Cart';
-import { Checkout } from './components/Checkout';
+import { WishlistProvider } from './context/WishlistContext';
+import { HistoryProvider } from './context/HistoryContext';
+
+const Cart = lazy(() => import('./components/Cart'));
+const Checkout = lazy(() => import('./components/Checkout'));
 
 const AppContent: React.FC = () => {
   const { cart } = useCart();
@@ -25,7 +28,9 @@ const AppContent: React.FC = () => {
             <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-30">
               <div className="relative">
                 <button className="absolute top-2 right-2 text-gray-500 text-xl" onClick={() => setShowCart(false)}>&times;</button>
-                <Cart />
+                <Suspense fallback={<div className="p-8">Carregando carrinho...</div>}>
+                  <Cart />
+                </Suspense>
                 <div className="mt-6 flex justify-center">
                   <button
                     className="bg-green-500 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-green-600 transition"
@@ -36,7 +41,9 @@ const AppContent: React.FC = () => {
                 </div>
                 {showCheckout && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-                    <Checkout onClose={() => { setShowCheckout(false); setShowCart(false); }} />
+                    <Suspense fallback={<div className="p-8">Carregando checkout...</div>}>
+                      <Checkout onClose={() => { setShowCheckout(false); setShowCart(false); }} />
+                    </Suspense>
                   </div>
                 )}
               </div>
@@ -50,9 +57,13 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <CartProvider>
-    <AppContent />
-  </CartProvider>
+  <HistoryProvider>
+    <WishlistProvider>
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
+    </WishlistProvider>
+  </HistoryProvider>
 );
 
 export default App;

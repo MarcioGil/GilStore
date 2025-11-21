@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Temporariamente desabilitado para garantir sincronização
+# C:/Program\ Files/nodejs/node.exe "C:/Program Files/nodejs/node_modules/npm/bin/npx-cli.js" lint-staged

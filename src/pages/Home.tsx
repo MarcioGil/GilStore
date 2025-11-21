@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ProductModal } from '../components/ProductModal';
+import React, { useEffect, useState, useRef } from 'react';
+import { Suspense, lazy } from 'react';
 import { fetchProducts } from '../services/api';
+import { SkeletonProduct } from '../components/SkeletonProduct';
+import { WishlistButton } from '../components/WishlistButton';
 import { useCart } from '../context/CartContext';
+import { useHistory } from '../context/HistoryContext';
+const ProductModal = lazy(() => import('../components/ProductModal').then(m => ({ default: m.ProductModal })));
 export interface Product {
   id: number;
   title: string;
@@ -16,72 +20,80 @@ export interface Product {
 }
 
 // Mapeamento de nomes em português (fora do componente para evitar warning do useEffect)
-const categoriasPT: Record<string, string> = {
-  "men's clothing": "Roupas Masculinas",
-  "women's clothing": "Roupas Femininas",
-  "jewelery": "Joias",
-  "electronics": "Eletrônicos"
-};
-const nomeProdutosPT: Record<string, string> = {
-  "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila Fjallraven - Para Laptop 15\"",
-  "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta Masculina Premium Slim Fit",
-  "Mens Cotton Jacket": "Jaqueta Masculina de Algodão",
-  "Mens Casual Slim Fit": "Calça Masculina Slim Fit",
-  "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet": "Pulseira Feminina John Hardy Dragão Ouro & Prata",
-  "Solid Gold Petite Micropave ": "Anel Micropave Ouro Maciço",
-  "White Gold Plated Princess": "Anel Princesa Banhado a Ouro Branco",
-  "Pierced Owl Rose Gold Plated Stainless Steel Double": "Brinco Pierced Owl Aço Inox Banhado a Ouro Rosé",
-  "WD 2TB Elements Portable External Hard Drive - USB 3.0 ": "HD Externo WD 2TB USB 3.0",
-  "SanDisk SSD PLUS 1TB Internal SSD - SATA III 6 Gb/s": "SSD Interno SanDisk 1TB SATA III",
-  "Silicon Power 256GB SSD 3D NAND A55 SLC Cache Performance Boost SATA III 2.5": "SSD Silicon Power 256GB SATA III",
-  "WD 4TB Gaming Drive Works with Playstation 4 Portable External Hard Drive": "HD Externo WD 4TB para Playstation 4",
-  "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin": "Monitor Acer SB220Q 21.5\" Full HD IPS",
-  "Samsung 49-Inch CHG90 144Hz Curved Gaming Monitor": "Monitor Samsung 49\" Curvo 144Hz",
-  "BIYLACLESEN Women's 3-6 Packs Solid Basic Short Sleeve Boat Neck V ": "Blusa Feminina BIYLACLESEN Gola Canoa",
-  "Lock and Love Women's Removable Hooded Faux Leather Moto Biker Jacket": "Jaqueta Feminina Lock and Love Couro Sintético",
-  "Rain Jacket Women Windbreaker Striped Climbing Raincoats": "Jaqueta Feminina Impermeável Windbreaker",
-  "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa Feminina MBJ Gola Canoa",
-  "Opna Women's Short Sleeve Moisture": "Blusa Feminina Opna Manga Curta",
-  "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta Feminina DANVOUY Algodão Casual"
-};
-const descricaoProdutosPT: Record<string, string> = {
-  "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila resistente, ideal para o dia a dia e viagens, comporta notebook de até 15 polegadas.",
-  "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta masculina premium, ajuste slim, confortável para todas as ocasiões.",
-  "Mens Cotton Jacket": "Jaqueta masculina de algodão, perfeita para dias frios e looks casuais.",
-  "Mens Casual Slim Fit": "Calça masculina slim fit, tecido leve e moderno, ideal para o cotidiano.",
-  "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet": "Pulseira feminina John Hardy, design de dragão em ouro e prata, sofisticada e elegante.",
-  "Solid Gold Petite Micropave ": "Anel micropave em ouro maciço, delicado e brilhante para ocasiões especiais.",
-  "White Gold Plated Princess": "Anel princesa banhado a ouro branco, acabamento refinado e luxuoso.",
-  "Pierced Owl Rose Gold Plated Stainless Steel Double": "Brinco Pierced Owl em aço inox banhado a ouro rosé, moderno e resistente.",
-  "WD 2TB Elements Portable External Hard Drive - USB 3.0 ": "HD externo WD 2TB, conexão USB 3.0, alta velocidade para backup e armazenamento.",
-  "SanDisk SSD PLUS 1TB Internal SSD - SATA III 6 Gb/s": "SSD interno SanDisk 1TB, tecnologia SATA III, desempenho superior para seu PC.",
-  "Silicon Power 256GB SSD 3D NAND A55 SLC Cache Performance Boost SATA III 2.5": "SSD Silicon Power 256GB, rápido e confiável, ideal para upgrades.",
-  "WD 4TB Gaming Drive Works with Playstation 4 Portable External Hard Drive": "HD externo WD 4TB, compatível com Playstation 4, perfeito para gamers.",
-  "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin": "Monitor Acer 21.5\" Full HD IPS, ultrafino, imagem nítida e cores vibrantes.",
-  "Samsung 49-Inch CHG90 144Hz Curved Gaming Monitor": "Monitor Samsung 49\" curvo, 144Hz, experiência imersiva para jogos.",
-  "BIYLACLESEN Women's 3-6 Packs Solid Basic Short Sleeve Boat Neck V ": "Blusa feminina BIYLACLESEN, gola canoa, manga curta, básica e confortável.",
-  "Lock and Love Women's Removable Hooded Faux Leather Moto Biker Jacket": "Jaqueta feminina Lock and Love, couro sintético, capuz removível, estilo motoqueira.",
-  "Rain Jacket Women Windbreaker Striped Climbing Raincoats": "Jaqueta feminina impermeável, leve e estilosa, ideal para dias chuvosos.",
-  "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa feminina MBJ, manga curta, gola canoa, versátil para o dia a dia.",
-  "Opna Women's Short Sleeve Moisture": "Blusa feminina Opna, manga curta, tecido que absorve umidade, ideal para esportes.",
-  "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta feminina DANVOUY, algodão casual, confortável e moderna."
-};
 export const Home: React.FC = () => {
+  // HOOKS NO TOPO, NENHUM RETURN ANTES
+  const { addHistory } = useHistory();
+  const [currentPage, setCurrentPage] = useState(1);
+  const PRODUCTS_PER_PAGE = 8;
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const [category, setCategory] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-    const [minRating, setMinRating] = useState('');
-    const [sortBy, setSortBy] = useState('');
+  const [minRating, setMinRating] = useState('');
+  const [sortBy, setSortBy] = useState('');
   const { addToCart } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<Product|null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   // Estado para avaliações
   const [avaliacoes, setAvaliacoes] = useState<{[id:number]: {nota:number, comentario:string}[]}>({});
+
+  // Constantes auxiliares dentro do componente
+  const categoriasPT: Record<string, string> = {
+    "men's clothing": "Roupas Masculinas",
+    "women's clothing": "Roupas Femininas",
+    "jewelery": "Joias",
+    "electronics": "Eletrônicos"
+  };
+  const nomeProdutosPT: Record<string, string> = {
+    "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila Fjallraven - Para Laptop 15\"",
+    "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta Masculina Premium Slim Fit",
+    "Mens Cotton Jacket": "Jaqueta Masculina de Algodão",
+    "Mens Casual Slim Fit": "Calça Masculina Slim Fit",
+    "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet": "Pulseira Feminina John Hardy Dragão Ouro & Prata",
+    "Solid Gold Petite Micropave ": "Anel Micropave Ouro Maciço",
+    "White Gold Plated Princess": "Anel Princesa Banhado a Ouro Branco",
+    "Pierced Owl Rose Gold Plated Stainless Steel Double": "Brinco Pierced Owl Aço Inox Banhado a Ouro Rosé",
+    "WD 2TB Elements Portable External Hard Drive - USB 3.0 ": "HD Externo WD 2TB USB 3.0",
+    "SanDisk SSD PLUS 1TB Internal SSD - SATA III 6 Gb/s": "SSD Interno SanDisk 1TB SATA III",
+    "Silicon Power 256GB SSD 3D NAND A55 SLC Cache Performance Boost SATA III 2.5": "SSD Silicon Power 256GB SATA III",
+    "WD 4TB Gaming Drive Works with Playstation 4 Portable External Hard Drive": "HD Externo WD 4TB para Playstation 4",
+    "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin": "Monitor Acer SB220Q 21.5\" Full HD IPS",
+    "Samsung 49-Inch CHG90 144Hz Curved Gaming Monitor": "Monitor Samsung 49\" Curvo 144Hz",
+    "BIYLACLESEN Women's 3-6 Packs Solid Basic Short Sleeve Boat Neck V ": "Blusa Feminina BIYLACLESEN Gola Canoa",
+    "Lock and Love Women's Removable Hooded Faux Leather Moto Biker Jacket": "Jaqueta Feminina Lock and Love Couro Sintético",
+    "Rain Jacket Women Windbreaker Striped Climbing Raincoats": "Jaqueta Feminina Impermeável Windbreaker",
+    "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa Feminina MBJ Gola Canoa",
+    "Opna Women's Short Sleeve Moisture": "Blusa Feminina Opna Manga Curta",
+    "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta Feminina DANVOUY Algodão Casual"
+  };
+  const descricaoProdutosPT: Record<string, string> = {
+    "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila resistente, ideal para o dia a dia e viagens, comporta notebook de até 15 polegadas.",
+    "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta masculina premium, ajuste slim, confortável para todas as ocasiões.",
+    "Mens Cotton Jacket": "Jaqueta masculina de algodão, perfeita para dias frios e looks casuais.",
+    "Mens Casual Slim Fit": "Calça masculina slim fit, tecido leve e moderno, ideal para o cotidiano.",
+    "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet": "Pulseira feminina John Hardy, design de dragão em ouro e prata, sofisticada e elegante.",
+    "Solid Gold Petite Micropave ": "Anel micropave em ouro maciço, delicado e brilhante para ocasiões especiais.",
+    "White Gold Plated Princess": "Anel princesa banhado a ouro branco, acabamento refinado e luxuoso.",
+    "Pierced Owl Rose Gold Plated Stainless Steel Double": "Brinco Pierced Owl em aço inox banhado a ouro rosé, moderno e resistente.",
+    "WD 2TB Elements Portable External Hard Drive - USB 3.0 ": "HD externo WD 2TB, conexão USB 3.0, alta velocidade para backup e armazenamento.",
+    "SanDisk SSD PLUS 1TB Internal SSD - SATA III 6 Gb/s": "SSD interno SanDisk 1TB, tecnologia SATA III, desempenho superior para seu PC.",
+    "Silicon Power 256GB SSD 3D NAND A55 SLC Cache Performance Boost SATA III 2.5": "SSD Silicon Power 256GB, rápido e confiável, ideal para upgrades.",
+    "WD 4TB Gaming Drive Works with Playstation 4 Portable External Hard Drive": "HD externo WD 4TB, compatível com Playstation 4, perfeito para gamers.",
+    "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin": "Monitor Acer 21.5\" Full HD IPS, ultrafino, imagem nítida e cores vibrantes.",
+    "Samsung 49-Inch CHG90 144Hz Curved Gaming Monitor": "Monitor Samsung 49\" curvo, 144Hz, experiência imersiva para jogos.",
+    "BIYLACLESEN Women's 3-6 Packs Solid Basic Short Sleeve Boat Neck V ": "Blusa feminina BIYLACLESEN, gola canoa, manga curta, básica e confortável.",
+    "Lock and Love Women's Removable Hooded Faux Leather Moto Biker Jacket": "Jaqueta feminina Lock and Love, couro sintético, capuz removível, estilo motoqueira.",
+    "Rain Jacket Women Windbreaker Striped Climbing Raincoats": "Jaqueta feminina impermeável, leve e estilosa, ideal para dias chuvosos.",
+    "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa feminina MBJ, manga curta, gola canoa, versátil para o dia a dia.",
+    "Opna Women's Short Sleeve Moisture": "Blusa feminina Opna, manga curta, tecido que absorve umidade, ideal para esportes.",
+    "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta feminina DANVOUY, algodão casual, confortável e moderna."
+  };
 
   // Carregar avaliações do localStorage
   useEffect(() => {
@@ -94,6 +106,22 @@ export const Home: React.FC = () => {
     localStorage.setItem('avaliacoes', JSON.stringify(avaliacoes));
   }, [avaliacoes]);
 
+  // Debounce da busca em tempo real
+  useEffect(() => {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => {
+      if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    };
+  }, [search]);
+
+  // Resetar página ao filtrar/buscar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, category, minPrice, maxPrice, minRating, sortBy]);
+
   // Função para adicionar avaliação
   const adicionarAvaliacao = (id:number, nota:number, comentario:string) => {
     setAvaliacoes(prev => ({
@@ -101,25 +129,57 @@ export const Home: React.FC = () => {
       [id]: [...(prev[id]||[]), {nota, comentario}]
     }));
   };
-  useEffect(() => {
+
+  // Função para carregar produtos
+  const loadProducts = () => {
+    setLoading(true);
+    setError(null);
     fetchProducts()
       .then(data => {
-        // Traduz nomes e descrições para português
         const traduzidos = data.map((p: Product) => ({
           ...p,
           title: nomeProdutosPT[p.title] || p.title,
           description: descricaoProdutosPT[p.title] || p.description
         }));
         setProducts(traduzidos);
-        // Salva categorias traduzidas
         setCategories(Array.from(new Set(traduzidos.map((p: Product) => categoriasPT[p.category] || p.category))));
       })
       .catch(() => setError('Erro ao carregar produtos.'))
       .finally(() => setLoading(false));
-  }, []);
-  if (loading) return <div className="text-center mt-10">Carregando...</div>;
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+  };
 
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  // --- A PARTIR DAQUI, APENAS LÓGICA/RETORNOS CONDICIONAIS ---
+  // Nenhum hook abaixo deste ponto!
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <SkeletonProduct key={i} />
+        ))}
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center mt-10 gap-4">
+        <div className="text-red-500 font-semibold text-lg">{error}</div>
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+          onClick={loadProducts}
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
+  // ...existing code...
+  // Aqui deve continuar o restante do componente, como filtragem, paginação, renderização dos produtos, modais, etc.
+  // Certifique-se de que tudo está dentro deste corpo de função!
   // Banner de promoções
   const bannerPromocao = (
     <div className="w-full mb-6">
@@ -129,7 +189,7 @@ export const Home: React.FC = () => {
     </div>
   );
   let filteredProducts = products.filter(product => {
-    const matchesSearch = product.title.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = product.title.toLowerCase().includes(debouncedSearch.toLowerCase());
     // Compara categoria traduzida
     const categoriaTraduzida = categoriasPT[product.category] || product.category;
     const matchesCategory = category ? categoriaTraduzida === category : true;
@@ -167,6 +227,13 @@ export const Home: React.FC = () => {
         break;
     }
   }
+
+  // Paginação
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE);
+
+  // Já existe um useEffect para resetar página ao filtrar/buscar no topo do componente
+  // Removido para evitar hook condicional
   return (
     <div className="p-6">
       {bannerPromocao}
@@ -261,25 +328,32 @@ export const Home: React.FC = () => {
         </div>
       </form>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProducts.length === 0 ? (
+        {paginatedProducts.length === 0 ? (
           <div className="col-span-full text-center text-gray-500">Nenhum produto encontrado.</div>
         ) : (
-          filteredProducts.map(product => (
+          paginatedProducts.map(product => (
             <div
               key={product.id}
               className="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center hover:shadow-2xl hover:-translate-y-1 transition duration-200 border border-gray-100 cursor-pointer"
               onClick={e => {
-                // Evita abrir modal ao clicar no botão de adicionar ao carrinho
                 if ((e.target as HTMLElement).closest('button')) return;
                 setSelectedProduct(product);
                 setModalOpen(true);
+                addHistory({
+                  type: 'view',
+                  productId: product.id,
+                  title: product.title,
+                  image: product.image,
+                  date: new Date().toISOString()
+                });
               }}
               tabIndex={0}
               role="button"
               aria-label={`Ver detalhes de ${product.title}`}
             >
-              <div className="w-full flex justify-center items-center mb-4">
+              <div className="w-full flex justify-between items-start mb-4">
                 <img src={product.image} alt={product.title} className="h-32 object-contain" style={{maxWidth:'80%'}} />
+                <WishlistButton product={product} />
               </div>
               <h2 className="text-base font-semibold mb-2 text-center text-gray-800 line-clamp-2" title={product.title}>{product.title}</h2>
               <span className="text-blue-700 font-extrabold text-xl mb-2 drop-shadow">{product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
@@ -333,14 +407,47 @@ export const Home: React.FC = () => {
           ))
         )}
       </div>
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-8 gap-2">
+          <button
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 font-bold"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            aria-label="Página anterior"
+          >
+            &lt;
+          </button>
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              className={`px-3 py-1 rounded font-bold ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+              onClick={() => setCurrentPage(i + 1)}
+              aria-label={`Página ${i + 1}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 font-bold"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            aria-label="Próxima página"
+          >
+            &gt;
+          </button>
+        </div>
+      )}
     {/* Modal de detalhes do produto */}
     {modalOpen && selectedProduct && (
-      <ProductModal
-        product={selectedProduct}
-        open={modalOpen}
-        onClose={() => { setModalOpen(false); setSelectedProduct(null); }}
-        onAddToCart={addToCart}
-      />
+      <Suspense fallback={<div className="p-8">Carregando produto...</div>}>
+        <ProductModal
+          product={selectedProduct}
+          open={modalOpen}
+          onClose={() => { setModalOpen(false); setSelectedProduct(null); }}
+          onAddToCart={addToCart}
+        />
+      </Suspense>
     )}
   </div>
   );

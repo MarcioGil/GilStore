@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-export const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+import { useHistory } from '../context/HistoryContext';
+const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const { addHistory } = useHistory();
+  const [confirmCheckout, setConfirmCheckout] = useState(false);
     // Frete
     const [cep, setCep] = useState('');
     const [frete, setFrete] = useState<{valor:number, prazo:string}>({valor:0, prazo:''});
@@ -33,8 +36,25 @@ export const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmCheckout(true);
+  };
+
+  const confirmAndFinishCheckout = () => {
+    // Registrar cada item do carrinho como compra no histórico
+    cart.forEach(item => {
+      addHistory({
+        type: 'purchase',
+        productId: item.product.id,
+        title: item.product.title,
+        image: item.product.image,
+        date: new Date().toISOString(),
+        quantity: item.quantity,
+        price: item.product.price * item.quantity
+      });
+    });
     setSuccess(true);
     clearCart();
+    setConfirmCheckout(false);
     setTimeout(onClose, 3000);
   };
 
@@ -108,7 +128,21 @@ export const Checkout: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         {pagamento && (
           <button type="submit" className="w-full bg-green-500 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-green-600 transition">Confirmar Compra</button>
         )}
+        {/* Modal de confirmação de compra */}
+        {confirmCheckout && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-xs text-center">
+              <h3 className="text-lg font-bold mb-4">Finalizar compra?</h3>
+              <div className="flex gap-4 justify-center">
+                <button className="bg-green-500 text-white px-4 py-2 rounded font-bold" type="button" onClick={confirmAndFinishCheckout}>Confirmar</button>
+                <button className="bg-gray-200 px-4 py-2 rounded font-bold" type="button" onClick={() => setConfirmCheckout(false)}>Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
 };
+
+export default Checkout;
