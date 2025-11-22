@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 interface ProductModalProps {
   product: any;
@@ -7,10 +7,35 @@ interface ProductModalProps {
   onAddToCart: (product: any) => void;
 }
 
+
 const coresRoupas = ["Preto", "Branco", "Azul", "Vermelho", "Verde"];
 const tamanhosRoupas = ["P", "M", "G", "GG"];
 
 export const ProductModal: React.FC<ProductModalProps> = ({ product, open, onClose, onAddToCart }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Fechar ao pressionar Esc
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
+  // Fechar ao clicar fora do modal
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [open, onClose]);
+
   if (!open || !product) return null;
 
   // Mapeamento de descrições em português (igual ao Home.tsx)
@@ -44,8 +69,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, open, onClo
   const isRoupa = product.category?.toLowerCase().includes("roupa") || product.category?.toLowerCase().includes("clothing");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" aria-modal="true" role="dialog">
+      <div ref={modalRef} className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md relative" tabIndex={-1}>
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl"
           onClick={onClose}

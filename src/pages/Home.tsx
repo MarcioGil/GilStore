@@ -13,6 +13,7 @@ export interface Product {
   price: number;
   image: string;
   category: string;
+  stock?: number;
   rating?: {
     rate: number;
     count: number;
@@ -44,13 +45,13 @@ export const Home: React.FC = () => {
   const [avaliacoes, setAvaliacoes] = useState<{[id:number]: {nota:number, comentario:string}[]}>({});
 
   // Constantes auxiliares dentro do componente
-  const categoriasPT: Record<string, string> = {
+  const categoriasPT = React.useMemo(() => ({
     "men's clothing": "Roupas Masculinas",
     "women's clothing": "Roupas Femininas",
     "jewelery": "Joias",
     "electronics": "Eletrônicos"
-  };
-  const nomeProdutosPT: Record<string, string> = {
+  }) as Record<string, string>, []);
+  const nomeProdutosPT = React.useMemo(() => ({
     "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila Fjallraven - Para Laptop 15\"",
     "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta Masculina Premium Slim Fit",
     "Mens Cotton Jacket": "Jaqueta Masculina de Algodão",
@@ -71,8 +72,8 @@ export const Home: React.FC = () => {
     "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa Feminina MBJ Gola Canoa",
     "Opna Women's Short Sleeve Moisture": "Blusa Feminina Opna Manga Curta",
     "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta Feminina DANVOUY Algodão Casual"
-  };
-  const descricaoProdutosPT: Record<string, string> = {
+  }) as Record<string, string>, []);
+  const descricaoProdutosPT = React.useMemo(() => ({
     "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops": "Mochila resistente, ideal para o dia a dia e viagens, comporta notebook de até 15 polegadas.",
     "Mens Casual Premium Slim Fit T-Shirts ": "Camiseta masculina premium, ajuste slim, confortável para todas as ocasiões.",
     "Mens Cotton Jacket": "Jaqueta masculina de algodão, perfeita para dias frios e looks casuais.",
@@ -93,7 +94,7 @@ export const Home: React.FC = () => {
     "MBJ Women's Solid Short Sleeve Boat Neck V ": "Blusa feminina MBJ, manga curta, gola canoa, versátil para o dia a dia.",
     "Opna Women's Short Sleeve Moisture": "Blusa feminina Opna, manga curta, tecido que absorve umidade, ideal para esportes.",
     "DANVOUY Womens T Shirt Casual Cotton Short": "Camiseta feminina DANVOUY, algodão casual, confortável e moderna."
-  };
+  }) as Record<string, string>, []);
 
   // Carregar avaliações do localStorage
   useEffect(() => {
@@ -130,8 +131,8 @@ export const Home: React.FC = () => {
     }));
   };
 
-  // Função para carregar produtos
-  const loadProducts = () => {
+  // Função para carregar produtos (useCallback para dependência estável)
+  const loadProducts = React.useCallback(() => {
     setLoading(true);
     setError(null);
     fetchProducts()
@@ -146,11 +147,11 @@ export const Home: React.FC = () => {
       })
       .catch(() => setError('Erro ao carregar produtos.'))
       .finally(() => setLoading(false));
-  };
+  }, [categoriasPT, nomeProdutosPT, descricaoProdutosPT]);
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [loadProducts]);
 
   // --- A PARTIR DAQUI, APENAS LÓGICA/RETORNOS CONDICIONAIS ---
   // Nenhum hook abaixo deste ponto!
@@ -357,12 +358,19 @@ export const Home: React.FC = () => {
               </div>
               <h2 className="text-base font-semibold mb-2 text-center text-gray-800 line-clamp-2" title={product.title}>{product.title}</h2>
               <span className="text-blue-700 font-extrabold text-xl mb-2 drop-shadow">{product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+              {typeof product.stock === 'number' && (
+                <span className={`mb-2 text-sm font-semibold ${product.stock > 0 ? 'text-green-700' : 'text-red-500'}`}
+                  title={product.stock > 0 ? `Disponível: ${product.stock}` : 'Produto esgotado'}>
+                  {product.stock > 0 ? `Disponível: ${product.stock}` : 'Esgotado'}
+                </span>
+              )}
               <button
                 className="mt-auto bg-gradient-to-r from-pink-500 to-blue-600 text-white px-4 py-2 rounded-lg shadow hover:scale-105 hover:from-pink-600 transition font-bold tracking-wide"
                 onClick={e => {
                   e.stopPropagation();
                   addToCart(product);
                 }}
+                disabled={product.stock === 0}
               >
                 <span className="inline-block mr-2">+</span> Adicionar ao carrinho
               </button>

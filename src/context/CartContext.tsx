@@ -5,6 +5,12 @@ export interface Product {
   price: number;
   image: string;
   category: string;
+  stock?: number;
+  description?: string;
+  rating?: {
+    rate: number;
+    count: number;
+  };
 }
 export interface CartItem {
   product: Product;
