@@ -1,7 +1,3 @@
-
-
-
-
 # GilStore – Mini E-commerce React
 
 
@@ -191,7 +187,12 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 Olá! Eu sou **Márcio Gil**, Embaixador da turma 14 do DIO Campus Expert, estudante de Engenharia de Software, entusiasta de Educação, Inovação, Tecnologia e defensor da Justiça Social.
 
+**Contato e Links:**
 
+- [LinkedIn](https://linkedin.com/in/márcio-gil-1b7669309)
+- [E-mail](mailto:marciopaivagil@gmail.com)
+- [Currículo Online](https://marciogil.github.io/curriculum-vitae/)
+- [GitHub](https://github.com/MarcioGil/MarcioGil.git)
 
 Fique à vontade para entrar em contato e contribuir!
 
@@ -200,6 +201,33 @@ Fique à vontade para entrar em contato e contribuir!
 
 > Projeto desenvolvido para portfólio, estudos e colaboração aberta.
 
+
+
+## Testes Automatizados
+
+O projeto possui testes unitários e de integração usando **Jest** e **React Testing Library**.
+
+- Para rodar todos os testes:
+  ```bash
+  npm test
+  ```
+- Os principais componentes (catálogo, carrinho, checkout, wishlist, header, etc.) possuem cobertura de teste.
+- Há teste de integração simulando fluxo de compra em `src/pages/Home.test.tsx`.
+
+## SEO e Performance
+
+- O projeto inclui meta tags de SEO (título, descrição, Open Graph) em `public/index.html`.
+- Para analisar e monitorar a performance, utilize o [Lighthouse](https://developers.google.com/web/tools/lighthouse):
+  1. Abra o site no Chrome.
+  2. Clique com o botão direito > "Inspecionar" > aba "Lighthouse".
+  3. Gere o relatório para ver oportunidades de melhoria.
+- Dicas aplicadas:
+  - Lazy loading de imagens e componentes.
+  - Bundle otimizado (Create React App + Tailwind).
+  - PWA: carregamento offline e rápido.
+  - Layout responsivo e acessível.
+
+> Para portfólio, recomenda-se personalizar as meta tags e imagens Open Graph.
 
 ## PWA: Progressive Web App
 

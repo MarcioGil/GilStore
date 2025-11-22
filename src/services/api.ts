@@ -1,5 +1,5 @@
 
-export const API_URL = 'http://localhost:3002/products';
+export const API_URL = 'https://fakestoreapi.com/products';
 
 export async function fetchProducts() {
   const response = await fetch(API_URL);
